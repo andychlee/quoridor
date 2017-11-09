@@ -1,0 +1,32 @@
+table {
+    border-collapse: collapse;
+    border: 2px solid #5a4129;
+}
+
+.square {
+    width: 20px;
+    height: 20px;
+    background-color: #9c6e52;
+}
+
+.square-hover {
+    background-color: #75513b;
+}
+
+.v-groove {
+    width: 2px;
+    height: 20px;
+    background-color: #5a4129;
+}
+
+.h-groove {
+    width: 20px;
+    height: 2px;
+    background-color: #5a4129;
+}
+
+.cross {
+    width: 2px;
+    height: 2px;
+    background-color: #5a4129;
+}
