@@ -48,6 +48,7 @@ function createBoard() {
 
     createPieces();
     registerListeners();
+    var graph = initializeGraph();
     
 }
 
@@ -108,4 +109,34 @@ function squareEnter() {
 
 function squareExit() {
     //$(this).removeClass("square-hover");
+}
+
+// Returns an initialized graph of the board
+// Maybe not make it return, but actually change
+function initializeGraph() {
+    var graph = new Map();
+
+    for (var i = 0; i < 17; i += 2) {
+        for (var j = 0; j < 17; j += 2) {
+            var id = i.toString() + "-" + j.toString();
+            var edges = []
+            if ((i - 2) >= 0) {
+                edges.push( (i-2).toString() + "-" + j.toString() );
+            }
+            if ((i + 2) <= 16) {
+                edges.push( (i+2).toString() + "-" + j.toString() );
+            }
+            if ((j - 2) >= 0) {
+                edges.push( i.toString() + "-" + (j-2).toString() );
+            } 
+            if ((j + 2) <= 16) {
+                edges.push( i.toString() + "-" + (j+2).toString() );
+            }
+            graph.set(id, edges);
+        }
+    }
+
+    graph.set("0-0", ["0-2", "2-0"] );
+
+    return graph;
 }
