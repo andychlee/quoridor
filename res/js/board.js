@@ -46,8 +46,9 @@ function createBoard() {
 
     boarddiv.appendChild(table);
 
+    createPieces();
     registerListeners();
-    var piece_1 = document.createElement()
+    
 }
 
 // Registers listeners
@@ -68,19 +69,43 @@ function registerListeners() {
     $(".h-groove").hover(function() {
         console.log("Hovered h-groove: " + $(this).attr("id"));
     });
+    $(".player-piece").on("click", function() {
+        console.log("Clicked player piece");
+        
+        var row = parseInt($(this).attr("row"));
+        var col = parseInt($(this).attr("col"));
+        var up = document.getElementById((row - 2) + "-" + col);
+        var down = document.getElementById((row + 2) + "-" + col);
+        var left = document.getElementById(row + "-" + (col - 2));
+        var rigth = document.getElementById(row + "-" + (col + 2));
+        console.log("Located at " + row + "-" + col);
+    });
 
 }
 
+
+function createPieces() {
+    var piece_1 = document.createElement("div");
+    piece_1.setAttribute("class", "player-piece");
+    piece_1.setAttribute("id", "player-one");
+    piece_1.setAttribute("row", "0");
+    piece_1.setAttribute("col", "8");
+    var loc_1 = document.getElementById("0-8");
+    loc_1.appendChild(piece_1);
+
+    var piece_2 = document.createElement("div");
+    piece_2.setAttribute("class", "player-piece");
+    piece_2.setAttribute("id", "player-two");
+    piece_2.setAttribute("row", "16");
+    piece_2.setAttribute("col", "8");
+    var loc_2 = document.getElementById("16-8");
+    loc_2.appendChild(piece_2);
+}
+
 function squareEnter() {
-    $(this).addClass("square-hover");
+    //$(this).addClass("square-hover");
 }
 
 function squareExit() {
     //$(this).removeClass("square-hover");
 }
-
-/*"name": "Launch index.html (disable sourcemaps)",
-"type": "chrome",
-"request": "launch",
-"sourceMaps": false,
-"file": "${workspaceRoot}/index.html"*/

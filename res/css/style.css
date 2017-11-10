@@ -30,3 +30,18 @@ table {
     height: 2px;
     background-color: #5a4129;
 }
+
+#player-one {
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    background: #fd2121
+
+}
+
+#player-two {
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    background: #2471ff
+}
