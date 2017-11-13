@@ -1,3 +1,7 @@
+var boardGraph = new Map();
+var playerOne = [0, 8];
+var playerTwo = [16, 8];
+
 // Create a board with wall and square locations
 function createBoard() {
     console.log("Creating table");
@@ -111,10 +115,8 @@ function squareExit() {
     //$(this).removeClass("square-hover");
 }
 
-// Returns an initialized graph of the board
-// Maybe not make it return, but actually change
+// Initialize graph of the board
 function initializeGraph() {
-    var graph = new Map();
 
     for (var i = 0; i < 17; i += 2) {
         for (var j = 0; j < 17; j += 2) {
@@ -132,11 +134,38 @@ function initializeGraph() {
             if ((j + 2) <= 16) {
                 edges.push( i.toString() + "-" + (j+2).toString() );
             }
-            graph.set(id, edges);
+            boardGraph.set(id, edges);
         }
     }
 
-    graph.set("0-0", ["0-2", "2-0"] );
+    console.log(boardGraph);
+    return boardGraph;
+}
 
-    return graph;
+function playWall(row, col) {
+    if (row % 2 == 1) {
+        var above = row - 1;
+        var below = row + 1;
+        var newCol = col + 2;
+    } else if (col % 2 == 1) {
+
+    } else {
+        console.log("Should not get here!");
+    }
+}
+
+function playPlayerOne() {
+
+}
+
+function playPlayerTwo() {
+    
+}
+
+function validWalls() {
+
+}
+
+function validMoves() {
+
 }
