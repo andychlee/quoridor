@@ -82,7 +82,7 @@ function registerListeners() {
         var up = document.getElementById((row - 2) + "-" + col);
         var down = document.getElementById((row + 2) + "-" + col);
         var left = document.getElementById(row + "-" + (col - 2));
-        var rigth = document.getElementById(row + "-" + (col + 2));
+        var right = document.getElementById(row + "-" + (col + 2));
         console.log("Located at " + row + "-" + col);
     });
 
@@ -143,29 +143,98 @@ function initializeGraph() {
 }
 
 function playWall(row, col) {
+    var squareId;
+    var wallId = row.toString() + "-" + col.toString();
     if (row % 2 == 1) {
         var above = row - 1;
         var below = row + 1;
-        var newCol = col + 2;
+        var rightCol = col + 2;
+        
+        // Top left square
+        squareId = above.toString() + "-" + col.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
+        // Bottom left square
+        squareId = below.toString() + "-" + col.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
+        // Top right square
+        squareId = above.toString() + "-" + rightCol.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
+        // Bottom right square
+        squareId = above.toString() + "-" + rightCol.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
     } else if (col % 2 == 1) {
+        var left = col - 1;
+        var rigth = col + 1;
+        var belowRow = row + 2;
+
+        // Top left square
+        squareId = row.toString() + "-" + left.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
+        // Bottom left square
+        squareId = belowRow.toString() + "-" + left.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
+        // Top right square
+        squareId = row.toString() + "-" + right.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
+
+        // Bottom right square
+        squareId = belowRow.toString() + "-" + right.toString();
+        boardGraph.set(squareId, removeWall(squareId, wallId));
 
     } else {
         console.log("Should not get here!");
     }
 }
 
-function playPlayerOne() {
+function removeWall(squareId, wallId) {
+    var walls = boardGraph.get(squareId);
+    var newWalls;
+    for (var i = 0; i < walls.length; ++i) {
+        if (walls[i] != wallId) {
+            newWalls.push(walls[i]);
+        }            
+    }
+    return newWalls;
+}
+
+function playPlayerOne(row, col) {
 
 }
 
-function playPlayerTwo() {
+function playPlayerTwo(row, col) {
     
 }
 
+// Returns an array of valid wall placements
 function validWalls() {
-
+    //go through each key in the map
 }
 
-function validMoves() {
+// Returns an array of valid moves for the given player.
+function validMoves(playerNum) {
+    var row, col, id;
 
+    if (playerNum == 1) {
+        row = playerOne[0];
+        col = playerOne[1];
+    } else if (playerNum == 2) {
+        row = playerTwo[0];
+        col = playerTwo[1];
+    } else {
+        console.log("[validMoves] Unwanted State!");
+        return [];
+    }
+
+    id = row.toString() + "-" + col.toString();
+    if (boardGraph.has(id)) {
+        return boardGraph.get(id);
+    } else {
+        return [];
+    }
 }
