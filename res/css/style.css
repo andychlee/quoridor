@@ -39,9 +39,23 @@ table {
 
 }
 
+#player-one-shadow {
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    background: #fd212186
+}
+
 #player-two {
     border-radius: 50%;
     height: 18px;
     width: 18px;
     background: #2471ff
+}
+
+#player-two-shadow {
+    border-radius: 50%;
+    height: 18px;
+    width: 18px;
+    background: #2474ff86
 }

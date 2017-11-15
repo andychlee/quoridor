@@ -51,41 +51,67 @@ function createBoard() {
     boarddiv.appendChild(table);
 
     createPieces();
+    initializeGraph();
     registerListeners();
-    var graph = initializeGraph();
     
 }
 
 // Registers listeners
 function registerListeners() {
-    $(".square").click(function () {
-        console.log("Clicked square: " + $(this).attr("id"));
-    });
-    $(".square").hover(squareEnter, squareExit);
-    $(".v-groove").click(function() {
-        console.log("Hovered v-groove: " + $(this).attr("id"));
-    });
-    $(".v-groove").hover(function() {
-        console.log("Hovered v-groove: " + $(this).attr("id"));
-    });
-    $(".h-groove").click(function() {
-        console.log("Hovered h-groove: " + $(this).attr("id"));
-    });
-    $(".h-groove").hover(function() {
-        console.log("Hovered h-groove: " + $(this).attr("id"));
-    });
-    $(".player-piece").on("click", function() {
-        console.log("Clicked player piece");
-        
-        var row = parseInt($(this).attr("row"));
-        var col = parseInt($(this).attr("col"));
-        var up = document.getElementById((row - 2) + "-" + col);
-        var down = document.getElementById((row + 2) + "-" + col);
-        var left = document.getElementById(row + "-" + (col - 2));
-        var right = document.getElementById(row + "-" + (col + 2));
-        console.log("Located at " + row + "-" + col);
-    });
+    var validMovesOne = validMoves(1);
+    var validMovesTwo = validMoves(2);
 
+    for (var i = 0; i < validMovesOne.length; ++i) {
+        var id = validMovesOne[i];
+        $("#" + id).on("click", function() {
+            console.log("Clicked valid player one move");
+        });
+
+        $("#" + id).hover(function() {
+            console.log("Hovered valid player one move");
+        });
+
+        $("#" + id).on("mouseenter", function() {
+            var shadow = document.createElement("div");
+            var coord = $(this).attr("id").split("-");
+            shadow.setAttribute("class", "player-piece-shadow");
+            shadow.setAttribute("id", "player-one-shadow");
+            shadow.setAttribute("row", coord[0]);
+            shadow.setAttribute("col", coord[1]);
+            
+            var loc = document.getElementById($(this).attr("id"));
+            loc.appendChild(shadow);
+        });
+
+        $("#" + id).on("mouseleave", function() {
+            $("#player-one-shadow").remove();
+        });
+    }
+
+    for (var i = 0; i < validMovesTwo.length; ++i) {
+        var id = validMovesTwo[i];
+        console.log(id);
+        $("#" + id).on("click", function() {
+            console.log("Clicked valid player two move");
+        });
+        
+        $("#" + id).on("mouseenter", function() {
+            var shadow = document.createElement("div");
+            var coord = $(this).attr("id").split("-");
+            shadow.setAttribute("class", "player-piece-shadow");
+            shadow.setAttribute("id", "player-two-shadow");
+            shadow.setAttribute("row", coord[0]);
+            shadow.setAttribute("col", coord[1]);
+            
+            var loc = document.getElementById($(this).attr("id"));
+            loc.appendChild(shadow);
+        });
+
+        $("#" + id).on("mouseleave", function() {
+            $("#player-two-shadow").remove();
+        });
+        
+    }
 }
 
 
@@ -139,9 +165,12 @@ function initializeGraph() {
     }
 
     console.log(boardGraph);
-    return boardGraph;
 }
 
+// TODO: This needs to do more checks to see if
+// Jumps would be blocked and we need to add diagonals.
+// Maybe have a general play function that does the fixing after?
+// Doesn't seem like that will work tho.
 function playWall(row, col) {
     var squareId;
     var wallId = row.toString() + "-" + col.toString();
@@ -203,6 +232,7 @@ function removeWall(squareId, wallId) {
     return newWalls;
 }
 
+// TODO: needs to evaluate whether jumps are possible
 function playPlayerOne(row, col) {
 
 }
