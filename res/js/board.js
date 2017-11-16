@@ -1,6 +1,11 @@
 var boardGraph = new Map();
 var playerOne = [0, 8];
 var playerTwo = [16, 8];
+var state = {
+    TURNONE : 1,
+    TURNTWO : 2,
+    END: 3
+};
 
 // Create a board with wall and square locations
 function createBoard() {
@@ -50,7 +55,8 @@ function createBoard() {
 
     boarddiv.appendChild(table);
 
-    createPieces();
+    createPlayerOnePiece(playerOne);
+    createPlayerTwoPiece(playerTwo);
     initializeGraph();
     registerListeners();
     
@@ -65,6 +71,8 @@ function registerListeners() {
         var id = validMovesOne[i];
         $("#" + id).on("click", function() {
             console.log("Clicked valid player one move");
+            var coord = $(this).attr("id").split("-");
+            playPlayerOne(parseInt(coord[0]), parseInt(coord[1]));
         });
 
         $("#" + id).hover(function() {
@@ -93,6 +101,8 @@ function registerListeners() {
         console.log(id);
         $("#" + id).on("click", function() {
             console.log("Clicked valid player two move");
+            var coord = $(this).attr("id").split("-");
+            playPlayerTwo(parseInt(coord[0]), parseInt(coord[1]));
         });
         
         $("#" + id).on("mouseenter", function() {
@@ -114,22 +124,23 @@ function registerListeners() {
     }
 }
 
-
-function createPieces() {
+function createPlayerOnePiece() {
     var piece_1 = document.createElement("div");
     piece_1.setAttribute("class", "player-piece");
     piece_1.setAttribute("id", "player-one");
-    piece_1.setAttribute("row", "0");
-    piece_1.setAttribute("col", "8");
-    var loc_1 = document.getElementById("0-8");
+    piece_1.setAttribute("row", playerOne[0].toString());
+    piece_1.setAttribute("col", playerOne[1].toString());
+    var loc_1 = document.getElementById(playerOne[0].toString() + "-" + playerOne[1].toString());
     loc_1.appendChild(piece_1);
+}
 
+function createPlayerTwoPiece() {
     var piece_2 = document.createElement("div");
     piece_2.setAttribute("class", "player-piece");
     piece_2.setAttribute("id", "player-two");
-    piece_2.setAttribute("row", "16");
-    piece_2.setAttribute("col", "8");
-    var loc_2 = document.getElementById("16-8");
+    piece_2.setAttribute("row", playerTwo[0].toString());
+    piece_2.setAttribute("col", playerTwo[1].toString());
+    var loc_2 = document.getElementById(playerTwo[0].toString() + "-" + playerTwo[1].toString());
     loc_2.appendChild(piece_2);
 }
 
@@ -234,11 +245,30 @@ function removeWall(squareId, wallId) {
 
 // TODO: needs to evaluate whether jumps are possible
 function playPlayerOne(row, col) {
-
+    playerOne = [row, col];
+    $("#player-one").remove();
+    createPlayerOnePiece();
+    // update the board
+    // disable all previous listeners
+    // TODO: don't delete all listeners
+    // only delete the ones that has changed.
+    // and only register ones that have been added
+    $(".square").off();
+    // delete shadow
+    $("#player-one-shadow").remove();
+    registerListeners();
 }
 
 function playPlayerTwo(row, col) {
-    
+    playerTwo = [row, col];
+    $("#player-one")
+    createPlayerTwoPiece();
+    // update the board
+    // disable all previous listeners
+    $(".square").off();
+    // delete shadow
+    $("#player-two-shadow").remove();
+    registerListeners();
 }
 
 // Returns an array of valid wall placements
