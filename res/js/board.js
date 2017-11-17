@@ -1,11 +1,14 @@
 var boardGraph = new Map();
 var playerOne = [0, 8];
 var playerTwo = [16, 8];
+var playerOneWalls = 10;
+var playerTwoWalls = 10;
 var state = {
     TURNONE : 1,
     TURNTWO : 2,
     END: 3
 };
+var currentState;
 
 // Create a board with wall and square locations
 function createBoard() {
@@ -57,6 +60,7 @@ function createBoard() {
 
     createPlayerOnePiece(playerOne);
     createPlayerTwoPiece(playerTwo);
+    currentState = state.TURNONE;
     initializeGraph();
     registerListeners();
     
@@ -64,64 +68,79 @@ function createBoard() {
 
 // Registers listeners
 function registerListeners() {
-    var validMovesOne = validMoves(1);
-    var validMovesTwo = validMoves(2);
+    if (currentState == state.TURNONE) {
+        console.log("Player One turn, registering listeners.");
+        var validMovesOne = validMoves(1);
 
-    for (var i = 0; i < validMovesOne.length; ++i) {
-        var id = validMovesOne[i];
-        $("#" + id).on("click", function() {
-            console.log("Clicked valid player one move");
-            var coord = $(this).attr("id").split("-");
-            playPlayerOne(parseInt(coord[0]), parseInt(coord[1]));
-        });
+        for (var i = 0; i < validMovesOne.length; ++i) {
+            var id = validMovesOne[i];
+            $("#" + id).on("click", function() {
+                console.log("Clicked valid player one move");
+                var coord = $(this).attr("id").split("-");
+                playPlayerOne(parseInt(coord[0]), parseInt(coord[1]));
+            });
+    
+            $("#" + id).hover(function() {
+                console.log("Hovered valid player one move");
+            });
+    
+            $("#" + id).on("mouseenter", function() {
+                var shadow = document.createElement("div");
+                var coord = $(this).attr("id").split("-");
+                shadow.setAttribute("class", "player-piece-shadow");
+                shadow.setAttribute("id", "player-one-shadow");
+                shadow.setAttribute("row", coord[0]);
+                shadow.setAttribute("col", coord[1]);
+                
+                var loc = document.getElementById($(this).attr("id"));
+                loc.appendChild(shadow);
+            });
+    
+            $("#" + id).on("mouseleave", function() {
+                $("#player-one-shadow").remove();
+            });
 
-        $("#" + id).hover(function() {
-            console.log("Hovered valid player one move");
-        });
+        }
 
-        $("#" + id).on("mouseenter", function() {
-            var shadow = document.createElement("div");
-            var coord = $(this).attr("id").split("-");
-            shadow.setAttribute("class", "player-piece-shadow");
-            shadow.setAttribute("id", "player-one-shadow");
-            shadow.setAttribute("row", coord[0]);
-            shadow.setAttribute("col", coord[1]);
-            
-            var loc = document.getElementById($(this).attr("id"));
-            loc.appendChild(shadow);
-        });
+    } else if (currentState == state.TURNTWO) {
+        console.log("Player Two turn, registering listeners.");
 
-        $("#" + id).on("mouseleave", function() {
-            $("#player-one-shadow").remove();
-        });
-    }
-
-    for (var i = 0; i < validMovesTwo.length; ++i) {
-        var id = validMovesTwo[i];
-        console.log(id);
-        $("#" + id).on("click", function() {
-            console.log("Clicked valid player two move");
-            var coord = $(this).attr("id").split("-");
-            playPlayerTwo(parseInt(coord[0]), parseInt(coord[1]));
-        });
+        var validMovesTwo = validMoves(2);
         
-        $("#" + id).on("mouseenter", function() {
-            var shadow = document.createElement("div");
-            var coord = $(this).attr("id").split("-");
-            shadow.setAttribute("class", "player-piece-shadow");
-            shadow.setAttribute("id", "player-two-shadow");
-            shadow.setAttribute("row", coord[0]);
-            shadow.setAttribute("col", coord[1]);
+        for (var i = 0; i < validMovesTwo.length; ++i) {
+            var id = validMovesTwo[i];
+            console.log(id);
+            $("#" + id).on("click", function() {
+                console.log("Clicked valid player two move");
+                var coord = $(this).attr("id").split("-");
+                playPlayerTwo(parseInt(coord[0]), parseInt(coord[1]));
+            });
             
-            var loc = document.getElementById($(this).attr("id"));
-            loc.appendChild(shadow);
-        });
+            $("#" + id).on("mouseenter", function() {
+                var shadow = document.createElement("div");
+                var coord = $(this).attr("id").split("-");
+                shadow.setAttribute("class", "player-piece-shadow");
+                shadow.setAttribute("id", "player-two-shadow");
+                shadow.setAttribute("row", coord[0]);
+                shadow.setAttribute("col", coord[1]);
+                
+                var loc = document.getElementById($(this).attr("id"));
+                loc.appendChild(shadow);
+            });
+    
+            $("#" + id).on("mouseleave", function() {
+                $("#player-two-shadow").remove();
+            });
+            
+        }
 
-        $("#" + id).on("mouseleave", function() {
-            $("#player-two-shadow").remove();
-        });
-        
+    } else if (currentState == state.END) {
+        console.log("Game has ended. No listeners to register.");
+    } else {
+        console.error("Invalid currentState.");
     }
+    
+    
 }
 
 function createPlayerOnePiece() {
@@ -257,6 +276,7 @@ function playPlayerOne(row, col) {
     // delete shadow
     $("#player-one-shadow").remove();
     registerListeners();
+    currentState = state.TURNTWO;
 }
 
 function playPlayerTwo(row, col) {
@@ -269,6 +289,7 @@ function playPlayerTwo(row, col) {
     // delete shadow
     $("#player-two-shadow").remove();
     registerListeners();
+    currentState = state.TURNONE;
 }
 
 // Returns an array of valid wall placements
