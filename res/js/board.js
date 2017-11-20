@@ -1,6 +1,8 @@
 var boardGraph = new Map();
 var playerOne = [0, 8];
 var playerTwo = [16, 8];
+var playerOneGoal = new Set();
+var playerTwoGoal = new Set();
 var playerOneWalls = 10;
 var playerTwoWalls = 10;
 var state = {
@@ -297,6 +299,41 @@ function validWalls() {
     //go through each key in the map
 }
 
+// Returns a boolean whether the specified playerNum
+// has a route to its goal in the graph
+function hasRoute(playerNum, graph) {
+    var targetNodes, currentNode, traverseNode, edges;
+    var stack = [];
+    var visited = new Set();
+
+    if (playerNum == 1) {
+        targetNodes = playerOneGoal;
+        currentNode = playerOne[0].toString() + "-" + playerOne[1].toString();
+    } else if (playerNum == 2) {
+        targetNodes = playerTwoGoal;
+        currentNode = playerTwo[0].toString() + "-" + playerTwo[1].toString();
+    } else {
+        console.error("[hasRoute] Unwanted State!");
+        return false;
+    }
+
+    stack.push(currentNode);
+    while (stack.length > 0) {
+        traverseNode = stack.pop();
+        if (targetNodes.has(traverseNode)) {
+            return true;
+        } else if (!visited.has(traverseNode)) {
+            visited.add(traverseNode);
+            edges = graph.get(currentNode);
+            for (var i = 0; i < edges.length; ++i) {
+                stack.push(edges[i]);
+            }
+        }
+    }
+
+    return false;
+}
+
 // Returns an array of valid moves for the given player.
 function validMoves(playerNum) {
     var row, col, id;
@@ -308,7 +345,7 @@ function validMoves(playerNum) {
         row = playerTwo[0];
         col = playerTwo[1];
     } else {
-        console.log("[validMoves] Unwanted State!");
+        console.error("[validMoves] Unwanted State!");
         return [];
     }
 
