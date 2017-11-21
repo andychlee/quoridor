@@ -1,8 +1,29 @@
 var boardGraph = new Map();
+var usedCrosses = new Set();
 var playerOne = [0, 8];
 var playerTwo = [16, 8];
-var playerOneGoal = new Set();
-var playerTwoGoal = new Set();
+var playerOneGoal = new Set([
+    "16-0",
+    "16-2",
+    "16-4",
+    "16-6",
+    "16-8",
+    "16-10",
+    "16-12",
+    "16-14",
+    "16-16"
+]);
+var playerTwoGoal = new Set([
+    "0-0",
+    "0-2",
+    "0-4",
+    "0-6",
+    "0-8",
+    "0-10",
+    "0-12",
+    "0-14",
+    "0-16"
+]);
 var playerOneWalls = 10;
 var playerTwoWalls = 10;
 var state = {
@@ -138,11 +159,91 @@ function registerListeners() {
 
     } else if (currentState == state.END) {
         console.log("Game has ended. No listeners to register.");
+        return;
     } else {
-        console.error("Invalid currentState.");
+        console.error("[registerListeners] Invalid currentState.");
+        return;
     }
     
+    // get a list of valid walls
+    var walls = validWalls();
     
+    for (var i = 0; i < walls.length; ++i) {
+        var id = walls[i]
+        var coord = id.split("-");
+
+        if (parseInt(coord[0]) % 2 == 1) {
+            $("#" + id).on("mouseenter", function() {
+                var coord = $(this).attr("id").split("-");
+                var row = parseInt(coord[0]);
+                var col = parseInt(coord[1]);
+
+                var wallshadow1 = document.createElement("div");
+                wallshadow1.setAttribute("class", "h-wall-shadow");
+                wallshadow1.setAttribute("row", row);
+                wallshadow1.setAttribute("col", col);
+
+                var crossshadow = document.createElement("div");
+                crossshadow.setAttribute("class", "cross-shadow");
+                crossshadow.setAttribute("row", row);
+                crossshadow.setAttribute("col", col + 1);
+
+                var wallshadow2 = document.createElement("div");
+                wallshadow2.setAttribute("class", "h-wall-shadow");
+                wallshadow2.setAttribute("row", row);
+                wallshadow2.setAttribute("col", col + 2);
+
+                var loc1 = document.getElementById(row.toString() + "-" + col.toString());
+                loc1.appendChild(wallshadow1);
+
+                var crossloc = document.getElementById(row.toString() + "-" + (col + 1).toString());
+                crossloc.appendChild(crossshadow);
+
+                var loc2 = document.getElementById(row.toString() + "-" + (col + 2).toString());
+                loc2.appendChild(wallshadow2);
+            });
+
+            $("#" + id).on("mouseleave", function() {
+                $(".h-wall-shadow").remove();
+                $(".cross-shadow").remove();            
+            });
+        } else {
+            $("#" + id).on("mouseenter", function() {
+                var coord = $(this).attr("id").split("-");
+                var row = parseInt(coord[0]);
+                var col = parseInt(coord[1]);
+
+                var wallshadow1 = document.createElement("div");
+                wallshadow1.setAttribute("class", "v-wall-shadow");
+                wallshadow1.setAttribute("row", row);
+                wallshadow1.setAttribute("col", col);
+
+                var crossshadow = document.createElement("div");
+                crossshadow.setAttribute("class", "cross-shadow");
+                crossshadow.setAttribute("row", row + 1);
+                crossshadow.setAttribute("col", col);
+
+                var wallshadow2 = document.createElement("div");
+                wallshadow2.setAttribute("class", "v-wall-shadow");
+                wallshadow2.setAttribute("row", row + 2);
+                wallshadow2.setAttribute("col", col);
+
+                var loc1 = document.getElementById(row.toString() + "-" + col.toString());
+                loc1.appendChild(wallshadow1);
+
+                var crossloc = document.getElementById((row + 1).toString() + "-" + col.toString());
+                crossloc.appendChild(crossshadow);
+
+                var loc2 = document.getElementById((row + 2).toString() + "-" + col.toString());
+                loc2.appendChild(wallshadow2);
+            });
+
+            $("#" + id).on("mouseleave", function() {
+                $(".v-wall-shadow").remove();
+                $(".cross-shadow").remove();            
+            });
+        }
+    }
 }
 
 function createPlayerOnePiece() {
@@ -277,21 +378,21 @@ function playPlayerOne(row, col) {
     $(".square").off();
     // delete shadow
     $("#player-one-shadow").remove();
-    registerListeners();
     currentState = state.TURNTWO;
+    registerListeners();
 }
 
 function playPlayerTwo(row, col) {
     playerTwo = [row, col];
-    $("#player-one")
+    $("#player-two").remove();
     createPlayerTwoPiece();
     // update the board
     // disable all previous listeners
     $(".square").off();
     // delete shadow
     $("#player-two-shadow").remove();
-    registerListeners();
     currentState = state.TURNONE;
+    registerListeners();    
 }
 
 // Returns an array of valid wall placements
@@ -324,9 +425,11 @@ function hasRoute(playerNum, graph) {
             return true;
         } else if (!visited.has(traverseNode)) {
             visited.add(traverseNode);
-            edges = graph.get(currentNode);
+            edges = graph.get(traverseNode);
             for (var i = 0; i < edges.length; ++i) {
-                stack.push(edges[i]);
+                if (!visited.has(edges[i])) {
+                    stack.push(edges[i]);
+                }
             }
         }
     }
