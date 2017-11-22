@@ -1,19 +1,21 @@
 table {
     border-collapse: collapse;
-    border: 2px solid #5a4129;
+    border: 4px solid #769656;
 }
 
 .square {
     width: 20px;
     height: 20px;
-    background-color: #9c6e52;
-}
-
-.square-hover {
-    background-color: #75513b;
+    background-color: #eeeed2;
 }
 
 .v-groove {
+    width: 2px;
+    height: 20px;
+    background-color: #769656;
+}
+
+.v-wall-shadow {
     width: 2px;
     height: 20px;
     background-color: #5a4129;
@@ -22,10 +24,22 @@ table {
 .h-groove {
     width: 20px;
     height: 2px;
+    background-color: #769656;
+}
+
+.h-wall-shadow {
+    width: 20px;
+    height: 2px;
     background-color: #5a4129;
 }
 
 .cross {
+    width: 2px;
+    height: 2px;
+    background-color: #769656;
+}
+
+.cross-shadow {
     width: 2px;
     height: 2px;
     background-color: #5a4129;
@@ -35,6 +49,7 @@ table {
     border-radius: 50%;
     height: 18px;
     width: 18px;
+    margin: auto;
     background: #fd2121
 
 }
@@ -43,6 +58,7 @@ table {
     border-radius: 50%;
     height: 18px;
     width: 18px;
+    margin: auto;
     background: #fd212186
 }
 
@@ -50,6 +66,7 @@ table {
     border-radius: 50%;
     height: 18px;
     width: 18px;
+    margin: auto;
     background: #2471ff
 }
 
@@ -57,5 +74,6 @@ table {
     border-radius: 50%;
     height: 18px;
     width: 18px;
+    margin: auto;
     background: #2474ff86
 }

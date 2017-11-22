@@ -305,6 +305,13 @@ function initializeGraph() {
 // Maybe have a general play function that does the fixing after?
 // Doesn't seem like that will work tho.
 function playWall(row, col) {
+    // TODO: Create wall
+    removeWall(row, col, boardGraph);
+}
+
+// Removes walls from given graph
+function removeWall(row, col, graph) {
+    // TODO: Create wall
     var squareId;
     var wallId = row.toString() + "-" + col.toString();
     if (row % 2 == 1) {
@@ -314,19 +321,19 @@ function playWall(row, col) {
         
         // Top left square
         squareId = above.toString() + "-" + col.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
         // Bottom left square
         squareId = below.toString() + "-" + col.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
         // Top right square
         squareId = above.toString() + "-" + rightCol.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
         // Bottom right square
         squareId = above.toString() + "-" + rightCol.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
     } else if (col % 2 == 1) {
         var left = col - 1;
@@ -335,28 +342,28 @@ function playWall(row, col) {
 
         // Top left square
         squareId = row.toString() + "-" + left.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
         // Bottom left square
         squareId = belowRow.toString() + "-" + left.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
         // Top right square
         squareId = row.toString() + "-" + right.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
         // Bottom right square
         squareId = belowRow.toString() + "-" + right.toString();
-        boardGraph.set(squareId, removeWall(squareId, wallId));
+        graph.set(squareId, removeEdge(squareId, wallId, graph));
 
     } else {
         console.log("Should not get here!");
     }
 }
 
-function removeWall(squareId, wallId) {
-    var walls = boardGraph.get(squareId);
-    var newWalls;
+function removeEdge(squareId, wallId, graph) {
+    var walls = graph.get(squareId);
+    var newWalls = [];
     for (var i = 0; i < walls.length; ++i) {
         if (walls[i] != wallId) {
             newWalls.push(walls[i]);
@@ -398,6 +405,26 @@ function playPlayerTwo(row, col) {
 // Returns an array of valid wall placements
 function validWalls() {
     //go through each key in the map
+    var allWalls;
+    var valid = [];
+    var coord;
+    for (var i = 0; i< allWalls.length; ++i) {
+        id = allWalls[i];
+        coord = id.split("-");
+        if (!crossUsed(id)) {
+            var wallRemoved = new Map(boardGraph);
+            removeWall(coord[0], coord[1], wallRemoved);
+            if (hasRoute(1, wallRemoved) && hasRoute(2, wallRemoved)) {
+                valid.push(id);
+            }
+        }
+    }
+    return valid;
+}
+
+// 
+function crossUsed(wall) {
+
 }
 
 // Returns a boolean whether the specified playerNum
