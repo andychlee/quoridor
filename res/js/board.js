@@ -117,6 +117,7 @@ function registerListeners() {
                 
                 var loc = document.getElementById($(this).attr("id"));
                 loc.appendChild(shadow);
+                debugger;
             });
     
             $("#" + id).on("mouseleave", function() {
@@ -304,16 +305,15 @@ function initializeGraph() {
 // Jumps would be blocked and we need to add diagonals.
 // Maybe have a general play function that does the fixing after?
 // Doesn't seem like that will work tho.
-function playWall(row, col) {
+function playWall(id) {
     // TODO: Create wall
-    removeWall(row, col, boardGraph);
+    removeWall(id, boardGraph);
 }
 
 // Removes walls from given graph
-function removeWall(row, col, graph) {
+function removeWall(wallId, graph) {
     // TODO: Create wall
     var squareId;
-    var wallId = row.toString() + "-" + col.toString();
     if (row % 2 == 1) {
         var above = row - 1;
         var below = row + 1;
@@ -364,11 +364,13 @@ function removeWall(row, col, graph) {
 function removeEdge(squareId, wallId, graph) {
     var walls = graph.get(squareId);
     var newWalls = [];
-    for (var i = 0; i < walls.length; ++i) {
-        if (walls[i] != wallId) {
-            newWalls.push(walls[i]);
-        }            
-    }
+    if (walls != undefined) {
+        for (var i = 0; i < walls.length; ++i) {
+            if (walls[i] != wallId) {
+                newWalls.push(walls[i]);
+            }            
+        }
+    } 
     return newWalls;
 }
 
@@ -405,7 +407,7 @@ function playPlayerTwo(row, col) {
 // Returns an array of valid wall placements
 function validWalls() {
     //go through each key in the map
-    var allWalls;
+    var allWalls = [];
     var valid = [];
     var coord;
     for (var i = 0; i< allWalls.length; ++i) {
@@ -413,7 +415,7 @@ function validWalls() {
         coord = id.split("-");
         if (!crossUsed(id)) {
             var wallRemoved = new Map(boardGraph);
-            removeWall(coord[0], coord[1], wallRemoved);
+            removeWall(id, wallRemoved);
             if (hasRoute(1, wallRemoved) && hasRoute(2, wallRemoved)) {
                 valid.push(id);
             }
@@ -424,7 +426,18 @@ function validWalls() {
 
 // 
 function crossUsed(wall) {
-
+    var coord = wall.split("-");
+    var cross;
+    if (parseInt(coord[0]) % 2 == 1) {
+        cross = coord[0] + "-" + (parseInt(coord[1]) + 1).toString();
+    } else {
+        cross = (parseInt(coord[0]) + 1).toString() + "-" + coord[1];
+    }
+    if (usedCrosses.has(cross)) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 // Returns a boolean whether the specified playerNum
