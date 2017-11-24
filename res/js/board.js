@@ -81,8 +81,10 @@ function createBoard() {
 
     boarddiv.appendChild(table);
 
+    // Create player pieces
     createPlayerOnePiece(playerOne);
     createPlayerTwoPiece(playerTwo);
+    // Player one turn at game start
     currentState = state.TURNONE;
     initializeGraph();
     registerListeners();
@@ -117,7 +119,6 @@ function registerListeners() {
                 
                 var loc = document.getElementById($(this).attr("id"));
                 loc.appendChild(shadow);
-                debugger;
             });
     
             $("#" + id).on("mouseleave", function() {
@@ -174,74 +175,76 @@ function registerListeners() {
         var coord = id.split("-");
 
         if (parseInt(coord[0]) % 2 == 1) {
+            $("#" + id).on("click", function() {
+                console.log("Clicked valid wall");
+                var coord = $(this).attr("id").split("-");
+                playWall(parseInt(coord[0]), parseInt(coord[1]));
+            });            
+
             $("#" + id).on("mouseenter", function() {
                 var coord = $(this).attr("id").split("-");
                 var row = parseInt(coord[0]);
                 var col = parseInt(coord[1]);
 
-                var wallshadow1 = document.createElement("div");
-                wallshadow1.setAttribute("class", "h-wall-shadow");
-                wallshadow1.setAttribute("row", row);
-                wallshadow1.setAttribute("col", col);
-
-                var crossshadow = document.createElement("div");
-                crossshadow.setAttribute("class", "cross-shadow");
-                crossshadow.setAttribute("row", row);
-                crossshadow.setAttribute("col", col + 1);
-
-                var wallshadow2 = document.createElement("div");
-                wallshadow2.setAttribute("class", "h-wall-shadow");
-                wallshadow2.setAttribute("row", row);
-                wallshadow2.setAttribute("col", col + 2);
-
                 var loc1 = document.getElementById(row.toString() + "-" + col.toString());
-                loc1.appendChild(wallshadow1);
+                loc1.classList.add("h-wall-shadow");
 
                 var crossloc = document.getElementById(row.toString() + "-" + (col + 1).toString());
-                crossloc.appendChild(crossshadow);
+                crossloc.classList.add("cross-shadow");
 
                 var loc2 = document.getElementById(row.toString() + "-" + (col + 2).toString());
-                loc2.appendChild(wallshadow2);
+                loc2.classList.add("h-wall-shadow");
             });
 
             $("#" + id).on("mouseleave", function() {
-                $(".h-wall-shadow").remove();
-                $(".cross-shadow").remove();            
+                var coord = $(this).attr("id").split("-");
+                var row = parseInt(coord[0]);
+                var col = parseInt(coord[1]);
+
+                var loc1 = document.getElementById(row.toString() + "-" + col.toString());
+                loc1.classList.remove("h-wall-shadow");
+
+                var crossloc = document.getElementById(row.toString() + "-" + (col + 1).toString());
+                crossloc.classList.remove("cross-shadow");
+
+                var loc2 = document.getElementById(row.toString() + "-" + (col + 2).toString());
+                loc2.classList.remove("h-wall-shadow");         
             });
         } else {
+            $("#" + id).on("click", function() {
+                console.log("Clicked valid wall");
+                var coord = $(this).attr("id").split("-");
+                playWall(parseInt(coord[0]), parseInt(coord[1]));
+            }); 
+
             $("#" + id).on("mouseenter", function() {
                 var coord = $(this).attr("id").split("-");
                 var row = parseInt(coord[0]);
                 var col = parseInt(coord[1]);
 
-                var wallshadow1 = document.createElement("div");
-                wallshadow1.setAttribute("class", "v-wall-shadow");
-                wallshadow1.setAttribute("row", row);
-                wallshadow1.setAttribute("col", col);
-
-                var crossshadow = document.createElement("div");
-                crossshadow.setAttribute("class", "cross-shadow");
-                crossshadow.setAttribute("row", row + 1);
-                crossshadow.setAttribute("col", col);
-
-                var wallshadow2 = document.createElement("div");
-                wallshadow2.setAttribute("class", "v-wall-shadow");
-                wallshadow2.setAttribute("row", row + 2);
-                wallshadow2.setAttribute("col", col);
-
                 var loc1 = document.getElementById(row.toString() + "-" + col.toString());
-                loc1.appendChild(wallshadow1);
+                loc1.classList.add("v-wall-shadow");
 
                 var crossloc = document.getElementById((row + 1).toString() + "-" + col.toString());
-                crossloc.appendChild(crossshadow);
+                crossloc.classList.add("cross-shadow");
 
                 var loc2 = document.getElementById((row + 2).toString() + "-" + col.toString());
-                loc2.appendChild(wallshadow2);
+                loc2.classList.add("v-wall-shadow");
             });
 
             $("#" + id).on("mouseleave", function() {
-                $(".v-wall-shadow").remove();
-                $(".cross-shadow").remove();            
+                var coord = $(this).attr("id").split("-");
+                var row = parseInt(coord[0]);
+                var col = parseInt(coord[1]);  
+                
+                var loc1 = document.getElementById(row.toString() + "-" + col.toString());
+                loc1.classList.remove("v-wall-shadow");
+
+                var crossloc = document.getElementById((row + 1).toString() + "-" + col.toString());
+                crossloc.classList.remove("cross-shadow");
+
+                var loc2 = document.getElementById((row + 2).toString() + "-" + col.toString());
+                loc2.classList.remove("v-wall-shadow");
             });
         }
     }
@@ -277,7 +280,6 @@ function squareExit() {
 
 // Initialize graph of the board
 function initializeGraph() {
-
     for (var i = 0; i < 17; i += 2) {
         for (var j = 0; j < 17; j += 2) {
             var id = i.toString() + "-" + j.toString();
@@ -297,76 +299,85 @@ function initializeGraph() {
             boardGraph.set(id, edges);
         }
     }
-
-    console.log(boardGraph);
 }
 
 // TODO: This needs to do more checks to see if
 // Jumps would be blocked and we need to add diagonals.
 // Maybe have a general play function that does the fixing after?
 // Doesn't seem like that will work tho.
-function playWall(id) {
+function playWall(row, col) {
     // TODO: Create wall
-    removeWall(id, boardGraph);
+    removeWall(row, col, boardGraph);
 }
 
 // Removes walls from given graph
-function removeWall(wallId, graph) {
+function removeWall(row, col, graph) {
     // TODO: Create wall
-    var squareId;
+    var squareId, targetId;
+    
     if (row % 2 == 1) {
+        // Horizontal wall
         var above = row - 1;
         var below = row + 1;
         var rightCol = col + 2;
         
         // Top left square
         squareId = above.toString() + "-" + col.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = below.toString() + "-" + col.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
         // Bottom left square
         squareId = below.toString() + "-" + col.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = above.toString() + "-" + col.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
         // Top right square
         squareId = above.toString() + "-" + rightCol.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = below.toString() + "-" + rightCol.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
         // Bottom right square
-        squareId = above.toString() + "-" + rightCol.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        squareId = below.toString() + "-" + rightCol.toString();
+        targetId = above.toString() + "-" + rightCol.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
     } else if (col % 2 == 1) {
+        // Vertical wall
         var left = col - 1;
-        var rigth = col + 1;
+        var right = col + 1;
         var belowRow = row + 2;
 
         // Top left square
         squareId = row.toString() + "-" + left.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = row.toString() + "-" + right.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
         // Bottom left square
         squareId = belowRow.toString() + "-" + left.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = belowRow.toString() + "-" + right.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
         // Top right square
         squareId = row.toString() + "-" + right.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = row.toString() + "-" + left.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
         // Bottom right square
         squareId = belowRow.toString() + "-" + right.toString();
-        graph.set(squareId, removeEdge(squareId, wallId, graph));
+        targetId = belowRow.toString() + "-" + left.toString();
+        graph.set(squareId, removeEdge(squareId, targetId, graph));
 
     } else {
         console.log("Should not get here!");
     }
 }
 
-function removeEdge(squareId, wallId, graph) {
+function removeEdge(squareId, targetId, graph) {
     var walls = graph.get(squareId);
     var newWalls = [];
     if (walls != undefined) {
         for (var i = 0; i < walls.length; ++i) {
-            if (walls[i] != wallId) {
+            if (walls[i] != targetId) {
                 newWalls.push(walls[i]);
             }            
         }
@@ -407,7 +418,7 @@ function playPlayerTwo(row, col) {
 // Returns an array of valid wall placements
 function validWalls() {
     //go through each key in the map
-    var allWalls = [];
+    var allWalls = ["0-1"];
     var valid = [];
     var coord;
     for (var i = 0; i< allWalls.length; ++i) {
@@ -415,7 +426,7 @@ function validWalls() {
         coord = id.split("-");
         if (!crossUsed(id)) {
             var wallRemoved = new Map(boardGraph);
-            removeWall(id, wallRemoved);
+            removeWall(parseInt(coord[0]), parseInt(coord[1]), wallRemoved);
             if (hasRoute(1, wallRemoved) && hasRoute(2, wallRemoved)) {
                 valid.push(id);
             }
@@ -424,7 +435,7 @@ function validWalls() {
     return valid;
 }
 
-// 
+// Returns boolean value whether the given wall used a cross
 function crossUsed(wall) {
     var coord = wall.split("-");
     var cross;
