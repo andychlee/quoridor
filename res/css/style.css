@@ -4,51 +4,51 @@ table {
 }
 
 .square {
-    width: 20px;
-    height: 20px;
+    width: 40px;
+    height: 40px;
     background-color: #eeeed2;
 }
 
 .v-groove {
-    width: 2px;
-    height: 20px;
+    width: 6px;
+    height: 40px;
     background-color: #769656;
 }
 
 .v-wall-shadow {
-    width: 2px;
-    height: 20px;
+    width: 6px;
+    height: 40px;
     background-color: #5a4129;
 }
 
 .h-groove {
-    width: 20px;
-    height: 2px;
+    width: 40px;
+    height: 6px;
     background-color: #769656;
 }
 
 .h-wall-shadow {
-    width: 20px;
-    height: 2px;
+    width: 40px;
+    height: 6px;
     background-color: #5a4129;
 }
 
 .cross {
-    width: 2px;
-    height: 2px;
+    width: 6px;
+    height: 6px;
     background-color: #769656;
 }
 
 .cross-shadow {
-    width: 2px;
-    height: 2px;
+    width: 6px;
+    height: 6px;
     background-color: #5a4129;
 }
 
 #player-one {
     border-radius: 50%;
-    height: 18px;
-    width: 18px;
+    height: 36px;
+    width: 36px;
     margin: auto;
     background: #fd2121
 
@@ -56,24 +56,24 @@ table {
 
 #player-one-shadow {
     border-radius: 50%;
-    height: 18px;
-    width: 18px;
+    height: 36px;
+    width: 36px;
     margin: auto;
     background: #fd212186
 }
 
 #player-two {
     border-radius: 50%;
-    height: 18px;
-    width: 18px;
+    height: 36px;
+    width: 36px;
     margin: auto;
     background: #2471ff
 }
 
 #player-two-shadow {
     border-radius: 50%;
-    height: 18px;
-    width: 18px;
+    height: 36px;
+    width: 36px;
     margin: auto;
     background: #2474ff86
 }
