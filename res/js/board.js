@@ -414,31 +414,44 @@ function playPlayerOne(row, col) {
     playerOne = [row, col];
     $("#player-one").remove();
     createPlayerOnePiece();
-    // update the board
-    // disable all previous listeners
-    // TODO: don't delete all listeners
-    // only delete the ones that has changed.
-    // and only register ones that have been added
     $(".square").off();
     // delete shadow
     $("#player-one-shadow").remove();
     // check if the game has ended
-    currentState = state.TURNTWO;
-    registerListeners();
+    if (checkGameEnd()) { 
+        currentState = state.END;
+    } else {
+        currentState = state.TURNTWO;
+        registerListeners();
+    }
 }
 
 function playPlayerTwo(row, col) {
     playerTwo = [row, col];
     $("#player-two").remove();
     createPlayerTwoPiece();
-    // update the board
-    // disable all previous listeners
     $(".square").off();
     // delete shadow
     $("#player-two-shadow").remove();
     // check if the game has ended
-    currentState = state.TURNONE;
-    registerListeners();    
+    if (checkGameEnd()) {
+        currentState = state.END;
+    } else {
+        currentState = state.TURNONE;
+        registerListeners(); 
+    }
+}
+
+function checkGameEnd() {
+    var playerOneLoc = playerOne[0].toString() + "-" + playerOne[1].toString();
+    var playerTwoLoc = playerTwo[0].toString() + "-" + playerTwo[1].toString();
+
+    if (playerOneGoal.has(playerOneLoc)) {
+        return true;
+    } else if (playerTwoGoal.has(playerTwoLoc)) {
+        return true;
+    }
+    return false;
 }
 
 // Returns an array of valid wall placements
