@@ -579,21 +579,30 @@ function hasRoute(playerNum, graph) {
 
 // Returns an array of valid moves for the given player.
 function validMoves(playerNum) {
-    var row, col, id;
+    var id, moves, other;
 
     if (playerNum == 1) {
-        row = playerOne[0];
-        col = playerOne[1];
+        id = playerOne[0].toString() + "-" + playerOne[1].toString();
+        other = playerTwo[0].toString() + "-" + playerTwo[1].toString();
+
     } else if (playerNum == 2) {
-        row = playerTwo[0];
-        col = playerTwo[1];
+        id = playerTwo[0].toString() + "-" + playerTwo[1].toString();
+        other = playerOne[0].toString() + "-" + playerOne[1].toString();
     } else {
         console.error("[validMoves] Unwanted State!");
         return [];
     }
 
-    id = row.toString() + "-" + col.toString();
     if (boardGraph.has(id)) {
+        moves = boardGraph.get(id);
+        for (var i = 0; i < moves.length; ++i) {
+            if (moves[i] == other) {
+                // Generate jumps
+                // First check what walls are used
+                // get the direction to jump over from the other.
+                //
+            }
+        }
         return boardGraph.get(id);
     } else {
         return [];
