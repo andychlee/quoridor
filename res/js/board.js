@@ -579,31 +579,78 @@ function hasRoute(playerNum, graph) {
 
 // Returns an array of valid moves for the given player.
 function validMoves(playerNum) {
-    var id, moves, other;
+    var id, moves, other, src, dest;
+    var valid = [];
 
     if (playerNum == 1) {
         id = playerOne[0].toString() + "-" + playerOne[1].toString();
+        src = playerOne;
         other = playerTwo[0].toString() + "-" + playerTwo[1].toString();
-
+        dest = playerTwo;
     } else if (playerNum == 2) {
         id = playerTwo[0].toString() + "-" + playerTwo[1].toString();
+        src = playerTwo;
         other = playerOne[0].toString() + "-" + playerOne[1].toString();
+        dest = playerOne;
     } else {
         console.error("[validMoves] Unwanted State!");
-        return [];
+        return valid;
     }
 
     if (boardGraph.has(id)) {
         moves = boardGraph.get(id);
         for (var i = 0; i < moves.length; ++i) {
             if (moves[i] == other) {
-                // Generate jumps
-                // First check what walls are used
-                // get the direction to jump over from the other.
-                //
+                var delta, jump, destMoves;
+
+                if (src[0] == dest[0]) {
+                    // Rows are the same
+                    delta = dest[1] - src[1];
+                    jump = src[0].toString() + "-" + (dest[1] + delta).toString();
+                    destMoves = boardGraph.get(other);
+                    
+                    if (boardGraph.has(other) && destMoves.includes(jump)) {
+                        valid.push(jump);
+                    } else {
+                        var above = (dest[0] - 2).toString() + "-" + dest[1].toString();
+                        var below = (dest[0] + 2).toString() + "-" + dest[1].toString();
+                        
+                        if (destMoves.includes(above)) {
+                            valid.push(above);
+                        }
+                        if (destmoves.includes(below)) {
+                            valid.push(below);
+                        }
+                    }
+
+                } else if (src[1] == dest[1]) {
+                    // Cols are the same
+                    delta = dest[0] - src[0];
+                    jump = (dest[0] + delta).toString() + "-" + dest[1].toString();
+                    destMoves = boardGraph.get(other);
+                    
+                    if (boardGraph.has(other) && destMoves.includes(jump)) {
+                        valid.push(jump);
+                    } else {
+                        var left = dest[0].toString() + "-" + (dest[1] - 2).toString();
+                        var right = dest[0].toString() + "-" + (dest[1] + 2).toString();
+                        
+                        if (destMoves.includes(left)) {
+                            valid.push(left);
+                        }
+                        if (destMoves.includes(right)) {
+                            valid.push(right);
+                        }
+                    }
+
+                } else {
+                    console.error("[validMoves] Unwanted State!");
+                }
+            } else {
+                valid.push(moves[i]);
             }
         }
-        return boardGraph.get(id);
+        return valid;
     } else {
         return [];
     }
