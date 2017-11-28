@@ -33,6 +33,18 @@ var state = {
 };
 var currentState;
 
+// Initialize
+function init() {
+    createBoard();
+    updateWallLabels();
+}
+
+// Updates the wall labels
+function updateWallLabels() {
+    $("#OneNumWalls").text(playerOneWalls);
+    $("#TwoNumWalls").text(playerTwoWalls);
+}
+
 // Create a board with wall and square locations
 function createBoard() {
     console.log("Creating table");
@@ -91,6 +103,11 @@ function createBoard() {
     initializeGraph();
     registerListeners();
     
+}
+
+// Reset board
+function resetBoard() {
+
 }
 
 // Registers listeners
@@ -315,10 +332,13 @@ function playWall(row, col) {
     $(".wall").off();
     // check if the game has ended
     if (currentState == state.TURNONE) {
+        playerOneWalls -= 1;
         currentState = state.TURNTWO;
     } else if (currentState == state.TURNTWO) {
+        playerTwoWalls -= 1;
         currentState = state.TURNONE;
     }
+    updateWallLabels();
     $(".square").off();
     registerListeners();
 }

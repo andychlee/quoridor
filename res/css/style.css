@@ -3,6 +3,14 @@ table {
     border: 4px solid #769656;
 }
 
+#playerOneWalls {
+
+}
+
+#playerTwoWalls {
+    
+}
+
 .square {
     width: 40px;
     height: 40px;
