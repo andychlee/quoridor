@@ -146,6 +146,10 @@ function registerListeners() {
 
         }
 
+        if (playerOneWalls > 0) {
+            registerWallListeners();
+        }
+
     } else if (currentState == state.TURNTWO) {
         console.log("Player Two turn, registering listeners.");
 
@@ -178,6 +182,10 @@ function registerListeners() {
             
         }
 
+        if (playerTwoWalls > 0) {
+            registerWallListeners();
+        }
+
     } else if (currentState == state.END) {
         console.log("Game has ended. No listeners to register.");
         return;
@@ -185,7 +193,9 @@ function registerListeners() {
         console.error("[registerListeners] Invalid currentState.");
         return;
     }
-    
+}
+
+function registerWallListeners() {
     // get a list of valid walls
     var walls = validWalls();
     
@@ -328,19 +338,20 @@ function playWall(row, col) {
     // TODO: Create wall
     removeWall(row, col, boardGraph);
     addCross(row, col);
-
-    $(".wall").off();
+    
     // check if the game has ended
     if (currentState == state.TURNONE) {
-        playerOneWalls -= 1;
+        playerOneWalls = playerOneWalls - 1;
         currentState = state.TURNTWO;
     } else if (currentState == state.TURNTWO) {
-        playerTwoWalls -= 1;
+        playerTwoWalls = playerTwoWalls - 1;
         currentState = state.TURNONE;
     }
-    updateWallLabels();
+    
+    $(".wall").off();
     $(".square").off();
     registerListeners();
+    updateWallLabels();
 }
 
 // Adds cross to the usedCross
@@ -434,6 +445,7 @@ function playPlayerOne(row, col) {
     playerOne = [row, col];
     $("#player-one").remove();
     createPlayerOnePiece();
+    $(".wall").off();
     $(".square").off();
     // delete shadow
     $("#player-one-shadow").remove();
@@ -450,6 +462,7 @@ function playPlayerTwo(row, col) {
     playerTwo = [row, col];
     $("#player-two").remove();
     createPlayerTwoPiece();
+    $(".wall").off();
     $(".square").off();
     // delete shadow
     $("#player-two-shadow").remove();
