@@ -3,6 +3,20 @@ table {
     border: 4px solid #769656;
 }
 
+#main-view {
+    width: 85%;
+    margin-left: 7.5%;
+    margin-right: 7.5%;
+}
+
+#board {
+    float: left;
+}
+
+#info {
+    height: 450px;
+}
+
 #playerOneWalls {
 
 }
