@@ -651,7 +651,7 @@ function validMoves(playerNum) {
                         if (destMoves.includes(above)) {
                             valid.push(above);
                         }
-                        if (destmoves.includes(below)) {
+                        if (destMoves.includes(below)) {
                             valid.push(below);
                         }
                     }
