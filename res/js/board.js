@@ -36,6 +36,13 @@ var currentState;
 // Initialize
 function init() {
     createBoard();
+    // Create player pieces
+    createPlayerOnePiece(playerOne);
+    createPlayerTwoPiece(playerTwo);
+    // Player one turn at game start
+    currentState = state.TURNONE;
+    initializeGraph();
+    registerListeners();
     updateWallLabels();
 }
 
@@ -94,14 +101,6 @@ function createBoard() {
     }
 
     boarddiv.appendChild(table);
-
-    // Create player pieces
-    createPlayerOnePiece(playerOne);
-    createPlayerTwoPiece(playerTwo);
-    // Player one turn at game start
-    currentState = state.TURNONE;
-    initializeGraph();
-    registerListeners();
     
 }
 
