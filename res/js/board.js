@@ -74,7 +74,7 @@ function createBoard() {
                     td.setAttribute("class", "v-groove");
                     td.classList.add("wall");
                 }
-                
+
                 tr.appendChild(td);
             }
 
@@ -106,6 +106,31 @@ function createBoard() {
 
 // Reset board
 function resetBoard() {
+    // Remove all board elements
+    $(".wall").off();
+    $(".square").off();
+    $("#player-one").remove();
+    $("#player-one-shadow").remove();
+    $("#player-two").remove();
+    $("#player-two-shadow").remove();
+    $(".cross-shadow").removeClass("cross-shadow");
+    $(".h-wall-shadow").removeClass("h-wall-shadow");
+    $(".v-wall-shadow").removeClass("v-wall-shadow");
+    
+    boardGraph = new Map();
+    usedCrosses = new Set();
+    playerOne = [0, 8];
+    playerTwo = [16, 8];
+    playerOneWalls = 10;
+    playerTwoWalls = 10;
+
+    createPlayerOnePiece(playerOne);
+    createPlayerTwoPiece(playerTwo);
+    // Player one turn at game start
+    currentState = state.TURNONE;
+    initializeGraph();
+    registerListeners();
+    updateWallLabels();
 
 }
 
@@ -298,14 +323,6 @@ function createPlayerTwoPiece() {
     loc_2.appendChild(piece_2);
 }
 
-function squareEnter() {
-    //$(this).addClass("square-hover");
-}
-
-function squareExit() {
-    //$(this).removeClass("square-hover");
-}
-
 // Initialize graph of the board
 function initializeGraph() {
     for (var i = 0; i < 17; i += 2) {
@@ -439,7 +456,6 @@ function removeEdge(squareId, targetId, graph) {
     return newEdges;
 }
 
-// TODO: needs to evaluate whether jumps are possible
 function playPlayerOne(row, col) {
     playerOne = [row, col];
     $("#player-one").remove();
